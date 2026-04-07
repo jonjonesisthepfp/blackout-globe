@@ -18,13 +18,19 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 // ============ CONTROLS ============
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.rotateSpeed = 0.5;
-controls.zoomSpeed = 0.8;
+controls.dampingFactor = 0.08;
+controls.rotateSpeed = 0.4;
+controls.zoomSpeed = 0.6;
 controls.minDistance = 1.5;
 controls.maxDistance = 6;
 controls.autoRotate = true;
 controls.autoRotateSpeed = 0.3;
+controls.enablePan = false;  // prevents accidental panning
+controls.mouseButtons = {
+  LEFT: THREE.MOUSE.ROTATE,
+  MIDDLE: THREE.MOUSE.DOLLY,
+  RIGHT: THREE.MOUSE.ROTATE  // right-click also rotates instead of panning
+};
 
 // ============ GLOBE — black sphere ============
 const globeRadius = 1;
@@ -358,17 +364,32 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let activeZone = null;
 
-canvas.addEventListener('mousemove', (e) => {
+// Drag detection — prevent click from firing after a drag
+let pointerDownPos = { x: 0, y: 0 };
+let isDragging = false;
+
+canvas.addEventListener('pointerdown', (e) => {
+  pointerDownPos.x = e.clientX;
+  pointerDownPos.y = e.clientY;
+  isDragging = false;
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  const dx = e.clientX - pointerDownPos.x;
+  const dy = e.clientY - pointerDownPos.y;
+  if (Math.abs(dx) > 5 || Math.abs(dy) > 5) isDragging = true;
+
   if (currentTab !== 'globe') return;
   mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
   const hits = raycaster.intersectObjects(hotspotMeshes);
-  canvas.style.cursor = hits.length > 0 ? 'pointer' : 'default';
+  canvas.style.cursor = hits.length > 0 ? 'pointer' : 'grab';
 });
 
 canvas.addEventListener('click', (e) => {
   if (currentTab !== 'globe') return;
+  if (isDragging) return; // ignore clicks after dragging
 
   mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
