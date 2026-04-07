@@ -601,51 +601,224 @@ function buildIntelFeed() {
 }
 try { buildIntelFeed(); } catch(e) { console.warn('Intel feed init error:', e); }
 
+// ============ COUNTRY PROFILES ============
+const countryProfiles = [
+  {
+    id: 'usa', name: 'United States', flag: '🇺🇸', region: 'North America',
+    scores: { nuclear: 10, ai: 10, military: 10, conflict: 7, economic: 9 },
+    summary: 'Global military hegemon with the largest defense budget ($886B), 5,044 nuclear warheads, and dominant AI ecosystem. Currently waging war on Iran alongside Israel. Involved in 6 of 7 tracked conflict zones.',
+    ai: [
+      { name: 'GPT-5.4 / GPT-5-Thinking', org: 'OpenAI', desc: 'Benchmark for general reasoning, creative writing, and advanced coding.' },
+      { name: 'Gemini 3.1 Pro / 2.5 Pro', org: 'Google DeepMind', desc: 'Top model for general intelligence and multimodal tasks. Massive context windows.' },
+      { name: 'Claude Opus 4.6 / Sonnet 4.6', org: 'Anthropic', desc: 'High-level reasoning and safety. Preferred for complex agentic coding tasks.' },
+      { name: 'Llama 4 Maverick', org: 'Meta AI', desc: 'Leading open-source/open-weights model with massive context capability.' },
+      { name: 'Grok 4 / 4.1', org: 'xAI', desc: 'Real-time data integration with the X platform.' },
+    ],
+    military: ['5,044 nuclear warheads', '$886B defense budget (2024)', '11 aircraft carriers', '750+ overseas bases', 'Active in Iran, Yemen, Taiwan Strait, Korea'],
+    keyStats: { warheads: '5,044', budget: '$886B', activeConflicts: 6, aiModels: '5 frontier' },
+  },
+  {
+    id: 'china', name: 'China', flag: '🇨🇳', region: 'East Asia',
+    scores: { nuclear: 8, ai: 9, military: 9, conflict: 4, economic: 9 },
+    summary: 'Rapidly expanding nuclear arsenal (500+ warheads, projected 1,500 by 2035). World\'s 2nd largest defense budget. Conducting unprecedented military drills around Taiwan. AI ecosystem rivaling the US with DeepSeek and Qwen.',
+    ai: [
+      { name: 'DeepSeek-R1 / V3 / V4', org: 'DeepSeek', desc: 'Cost-effective performance matching American frontier models, especially in reasoning and math.' },
+      { name: 'Qwen 3 / 2.5 Max', org: 'Alibaba Cloud', desc: 'Highly competitive open-weight models excelling in multilingual and Asian language tasks.' },
+      { name: 'Ernie-5.0 / 4.0', org: 'Baidu', desc: 'Leading Chinese industrial model for Chinese language, math reasoning, and enterprise search.' },
+      { name: 'GLM-4 / 5', org: 'Zhipu AI', desc: 'Bridging academic research and industrial application.' },
+      { name: 'Kling AI', org: 'Kuaishou', desc: 'Major competitor in video generation.' },
+    ],
+    military: ['500+ nuclear warheads (expanding)', '$296B defense budget', '3 aircraft carriers', 'Largest navy by ship count', 'Taiwan blockade rehearsals ongoing'],
+    keyStats: { warheads: '500+', budget: '$296B', activeConflicts: 1, aiModels: '5 frontier' },
+  },
+  {
+    id: 'russia', name: 'Russia', flag: '🇷🇺', region: 'Eurasia',
+    scores: { nuclear: 10, ai: 4, military: 7, conflict: 8, economic: 5 },
+    summary: 'Largest nuclear arsenal in the world (5,580 warheads). Day 1,504 of Ukraine invasion with 1.3M+ casualties. Economy under heavy sanctions but sustained by energy exports. AI sector underdeveloped relative to military ambition.',
+    ai: [
+      { name: 'YandexGPT 4', org: 'Yandex', desc: 'Russia\'s leading LLM, primarily for Russian-language tasks and search.' },
+      { name: 'GigaChat', org: 'Sber', desc: 'State-backed conversational AI focused on Russian enterprise market.' },
+    ],
+    military: ['5,580 nuclear warheads (world\'s largest)', '$109B defense budget', 'Hypersonic missile capability', '8,000 North Korean troops deployed', 'Active war in Ukraine — Day 1,504'],
+    keyStats: { warheads: '5,580', budget: '$109B', activeConflicts: 1, aiModels: '2 domestic' },
+  },
+  {
+    id: 'iran', name: 'Iran', flag: '🇮🇷', region: 'Middle East',
+    scores: { nuclear: 5, ai: 2, military: 6, conflict: 9, economic: 4 },
+    summary: 'Under active US-Israeli bombardment (Day 38). Near-threshold nuclear state — 60% enriched uranium stockpile. Strait of Hormuz closed, disrupting 20% of global oil transit. Proxy network spanning Yemen, Lebanon, Iraq, and Syria.',
+    ai: [
+      { name: 'Dorna', org: 'PartAI', desc: 'Persian-language LLM for domestic use. Limited by sanctions on compute hardware.' },
+    ],
+    military: ['Near-threshold nuclear (60% enrichment)', 'Shahab/Emad ballistic missiles', 'Strait of Hormuz control', 'Proxy network: Houthis, Hezbollah, PMF', 'Under active bombardment — Day 38'],
+    keyStats: { warheads: '0 (threshold)', budget: '$10B', activeConflicts: 3, aiModels: '1 domestic' },
+  },
+  {
+    id: 'israel', name: 'Israel', flag: '🇮🇱', region: 'Middle East',
+    scores: { nuclear: 7, ai: 7, military: 8, conflict: 9, economic: 6 },
+    summary: 'Undeclared nuclear arsenal (estimated 90 warheads). Simultaneously waging war in Gaza (72,000+ killed), Lebanon, and Iran. Iron Dome and Arrow defense systems among the most advanced in the world. Strong AI/ML defense sector.',
+    ai: [
+      { name: 'AI21 Jamba 2', org: 'AI21 Labs', desc: 'Hybrid SSM-Transformer architecture for enterprise reasoning.' },
+      { name: 'Mobileye AI', org: 'Mobileye/Intel', desc: 'World-leading autonomous driving AI.' },
+      { name: 'Military AI', org: 'IDF/Unit 8200', desc: 'AI-powered targeting systems — "Gospel" and "Lavender" used in Gaza.' },
+    ],
+    military: ['~90 nuclear warheads (undeclared)', '$23.4B defense budget + $3.8B US aid', 'Iron Dome / Arrow / David\'s Sling', 'Active wars: Gaza, Lebanon, Iran', 'AI-assisted targeting systems deployed'],
+    keyStats: { warheads: '~90', budget: '$27B', activeConflicts: 3, aiModels: '3 notable' },
+  },
+  {
+    id: 'nkorea', name: 'North Korea', flag: '🇰🇵', region: 'East Asia',
+    scores: { nuclear: 7, ai: 1, military: 6, conflict: 3, economic: 1 },
+    summary: 'Hwasong-20 "most powerful nuclear strategic weapon" unveiled. World\'s largest road-mobile ICBM tested (86-min flight). SSBN construction revealed. 8,000 troops deployed to Russia. No meaningful AI sector but advanced cyber warfare capability.',
+    ai: [
+      { name: 'Cyber Operations', org: 'Lazarus Group / RGB', desc: 'State-sponsored hacking — $1.7B in crypto theft (2023). No known frontier AI models.' },
+    ],
+    military: ['50+ nuclear warheads (estimated)', 'Hwasong-19/20 ICBMs — can reach US mainland', 'SSBN submarine program', '1.3M active troops', '8,000 troops deployed to Russia'],
+    keyStats: { warheads: '50+', budget: '$4B (est.)', activeConflicts: 1, aiModels: '0 (cyber only)' },
+  },
+  {
+    id: 'europe', name: 'Europe (NATO)', flag: '🇪🇺', region: 'Europe',
+    scores: { nuclear: 7, ai: 6, military: 8, conflict: 4, economic: 8 },
+    summary: 'UK and France hold 500+ combined nuclear warheads. NATO\'s European members rapidly rearming post-Ukraine. Mistral AI leading European AI sovereignty push. EU defense spending surged to $380B in 2025.',
+    ai: [
+      { name: 'Mistral Large 3', org: 'Mistral AI (France)', desc: 'Leading European AI firm — high-efficiency open-source models rivaling US. GDPR compliant.' },
+      { name: 'Flux 2 Max', org: 'Black Forest Labs (Germany)', desc: 'Gaining ground in text-to-image for photorealism.' },
+    ],
+    military: ['515 nuclear warheads (UK + France)', '$380B combined defense spending', 'NATO Article 5 collective defense', 'Rapid rearmament post-Ukraine', 'Arms shipments to Ukraine ongoing'],
+    keyStats: { warheads: '515', budget: '$380B', activeConflicts: 1, aiModels: '2 frontier' },
+  },
+  {
+    id: 'uae', name: 'UAE', flag: '🇦🇪', region: 'Middle East',
+    scores: { nuclear: 1, ai: 5, military: 4, conflict: 3, economic: 7 },
+    summary: 'Major arms buyer and proxy conflict financier. Backing RSF in Sudan\'s civil war. Investing heavily in AI through TII\'s Falcon models and massive data center buildouts. Strategic position in Gulf energy markets.',
+    ai: [
+      { name: 'Falcon 2', org: 'TII (Technology Innovation Institute)', desc: 'Powerful open-source model focused on Arabic language and open research.' },
+    ],
+    military: ['No nuclear weapons', '$23B defense budget', 'Advanced drone fleet', 'Backing RSF in Sudan', 'Strategic Gulf positioning'],
+    keyStats: { warheads: '0', budget: '$23B', activeConflicts: 1, aiModels: '1 frontier' },
+  },
+];
+
+// Compute overall score for each country
+countryProfiles.forEach(c => {
+  const s = c.scores;
+  c.overallScore = Math.round(((s.nuclear + s.ai + s.military + s.conflict + s.economic) / 50) * 100);
+});
+
+// Sort by overall score
+countryProfiles.sort((a, b) => b.overallScore - a.overallScore);
+
 // ============ POPULATE LEADERBOARD ============
 function buildLeaderboard() {
   const list = document.getElementById('leaderboard-list');
-  const sorted = [...zones].sort((a, b) => b.severity - a.severity);
 
-  list.innerHTML = sorted.map((z, i) => {
-    const tc = z.severity >= 90 ? 'critical' : z.severity >= 65 ? 'high' : 'elevated';
+  list.innerHTML = countryProfiles.map((c, i) => {
+    const s = c.scores;
+    const maxCat = Object.entries(s).reduce((a, b) => b[1] > a[1] ? b : a, ['', 0]);
+    const catLabels = { nuclear: 'NUCLEAR', ai: 'AI', military: 'MILITARY', conflict: 'CONFLICT', economic: 'ECONOMIC' };
+    const topCategory = catLabels[maxCat[0]] || '';
+    const tc = c.overallScore >= 85 ? 'critical' : c.overallScore >= 60 ? 'high' : 'elevated';
+
+    // Mini bar chart for the 5 scores
+    const barSegments = Object.entries(s).map(([key, val]) => {
+      const color = key === 'nuclear' ? '#ff2240' : key === 'ai' ? '#00aaff' : key === 'military' ? '#ff8800' : key === 'conflict' ? '#ff4466' : '#22aa44';
+      return `<div class="lb-mini-bar" style="width:${val * 10}%; background:${color};" title="${catLabels[key]}: ${val}/10"></div>`;
+    }).join('');
+
     return `
-      <div class="lb-item" style="animation-delay: ${i * 0.08}s">
+      <div class="lb-item" data-country="${c.id}" style="animation-delay: ${i * 0.06}s">
         <span class="lb-rank">${String(i + 1).padStart(2, '0')}</span>
+        <span class="lb-flag">${c.flag}</span>
         <div class="lb-info">
-          <div class="lb-name">${z.name}</div>
-          <div class="lb-detail">${z.players.join(' · ')}</div>
+          <div class="lb-name">${c.name}</div>
+          <div class="lb-detail">${c.region} · ${topCategory} DOMINANT · ${c.keyStats.activeConflicts} conflict${c.keyStats.activeConflicts !== 1 ? 's' : ''}</div>
         </div>
-        <div class="lb-bar-wrap">
-          <div class="lb-bar ${tc}" style="width: ${z.severity}%"></div>
+        <div class="lb-scores-mini">
+          ${barSegments}
         </div>
-        <span class="lb-badge ${tc}">${z.threat}</span>
+        <div class="lb-overall">
+          <span class="lb-overall-num">${c.overallScore}</span>
+          <span class="lb-overall-label">THREAT</span>
+        </div>
+        <span class="lb-expand">→</span>
       </div>
     `;
   }).join('');
 
-  // Actor exposure
-  const actorMap = {};
-  zones.forEach(z => {
-    z.players.forEach(p => {
-      if (!actorMap[p]) actorMap[p] = [];
-      actorMap[p].push(z);
-    });
+  // Click handler
+  list.addEventListener('click', (e) => {
+    const item = e.target.closest('.lb-item');
+    if (!item) return;
+    const profile = countryProfiles.find(c => c.id === item.dataset.country);
+    if (profile) openCountryProfile(profile);
   });
+}
 
-  const actorsSorted = Object.entries(actorMap).sort((a, b) => b[1].length - a[1].length);
-  const actorList = document.getElementById('actor-list');
+function openCountryProfile(c) {
+  const modal = document.getElementById('countryModal');
+  const inner = document.getElementById('countryModalInner');
+  const s = c.scores;
+  const catLabels = { nuclear: 'NUCLEAR', ai: 'AI CAPABILITY', military: 'MILITARY POWER', conflict: 'CONFLICT INVOLVEMENT', economic: 'ECONOMIC LEVERAGE' };
+  const catColors = { nuclear: '#ff2240', ai: '#00aaff', military: '#ff8800', conflict: '#ff4466', economic: '#22aa44' };
 
-  actorList.innerHTML = actorsSorted.map(([name, conflicts], i) => {
+  const scoreRows = Object.entries(s).map(([key, val]) => {
+    const pct = val * 10;
+    const color = catColors[key];
     return `
-      <div class="actor-item" style="animation-delay: ${i * 0.06}s">
-        <span class="actor-name">${name}</span>
-        <div class="actor-dots">
-          ${conflicts.map(() => '<span class="actor-dot"></span>').join('')}
+      <div class="cp-score-row">
+        <span class="cp-score-label">${catLabels[key]}</span>
+        <div class="cp-score-bar-wrap">
+          <div class="cp-score-bar" style="width:${pct}%; background:${color};"></div>
         </div>
-        <span class="actor-count">${conflicts.length} CONFLICT${conflicts.length > 1 ? 'S' : ''}</span>
+        <span class="cp-score-val" style="color:${color}">${val}<span class="cp-score-max">/10</span></span>
       </div>
     `;
   }).join('');
+
+  const aiCards = c.ai.map(m => `
+    <div class="cp-ai-card">
+      <div class="cp-ai-name">${m.name}</div>
+      <div class="cp-ai-org">${m.org}</div>
+      <div class="cp-ai-desc">${m.desc}</div>
+    </div>
+  `).join('');
+
+  const milItems = c.military.map(m => `<div class="cp-mil-item">${m}</div>`).join('');
+
+  inner.innerHTML = `
+    <button class="cp-close" id="cpClose">✕</button>
+    <div class="cp-header">
+      <span class="cp-flag">${c.flag}</span>
+      <div>
+        <h2 class="cp-name">${c.name}</h2>
+        <span class="cp-region">${c.region}</span>
+      </div>
+      <div class="cp-overall-big">
+        <span class="cp-overall-num">${c.overallScore}</span>
+        <span class="cp-overall-label">THREAT<br>INDEX</span>
+      </div>
+    </div>
+    <p class="cp-summary">${c.summary}</p>
+
+    <div class="cp-section-title">THREAT ASSESSMENT</div>
+    <div class="cp-scores">${scoreRows}</div>
+
+    <div class="cp-section-title">AI CAPABILITY</div>
+    <div class="cp-ai-grid">${aiCards}</div>
+
+    <div class="cp-section-title">MILITARY PROFILE</div>
+    <div class="cp-mil-list">${milItems}</div>
+
+    <div class="cp-key-stats">
+      <div class="cp-stat"><span class="cp-stat-val">${c.keyStats.warheads}</span><span class="cp-stat-label">WARHEADS</span></div>
+      <div class="cp-stat"><span class="cp-stat-val">${c.keyStats.budget}</span><span class="cp-stat-label">DEFENSE BUDGET</span></div>
+      <div class="cp-stat"><span class="cp-stat-val">${c.keyStats.activeConflicts}</span><span class="cp-stat-label">ACTIVE CONFLICTS</span></div>
+      <div class="cp-stat"><span class="cp-stat-val">${c.keyStats.aiModels}</span><span class="cp-stat-label">AI MODELS</span></div>
+    </div>
+  `;
+
+  modal.classList.add('open');
+
+  document.getElementById('cpClose').addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
 }
 try { buildLeaderboard(); } catch(e) { console.warn('Leaderboard init error:', e); }
 
